@@ -1,0 +1,15 @@
+[project]
+name = "climbformer"
+version = "0.1.0"
+description = "Generate climbing route names."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.60.2",
+    "pydantic>=2.10.6",
+]
+
+[dependency-groups]
+dev = [
+    "python-dotenv>=1.0.1",
+]
