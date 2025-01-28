@@ -9,13 +9,15 @@ load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 client = OpenAI(api_key=GOOGLE_API_KEY, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
 
+MODEL = "gemini-2.0-flash-exp"
 
-PROMPT_TEMPLATE = """Generate me a comprehensive list of all the climbing routes with their grades and descriptions at this place: {{place}}, {{location}}. There should be several hundred routes. You know the place well, so you can generate a lot of routes.
+
+PROMPT_TEMPLATE = """Generate me a comprehensive list of all real climbing routes with their grades and descriptions at this place: {{place}}, {{location}}. There should be several hundred routes. You know the place well, so you can generate a lot of routes.
 Return the data as a JSON array where each object has exactly this schema:
 {
     "name": "string - name of the route",
     "grade": "string - climbing grade (use french sport climbing grades when possible)",
-    "description": "string - the classic description of the route as in a climbing guidebook"
+    "description": "string - the full description of the climbing route as in the guidebook"
 }
 Do not include any other fields or explanatory text, just the JSON array."""
 
@@ -28,7 +30,7 @@ class Route(BaseModel):
 class ClimbingRoutes(BaseModel):
     routes: list[Route]
 
-ROUTES_FILE = "data/routes_3.json"
+ROUTES_FILE = "data/routes_4.json"
 AREAS_FILE = "data/areas.json"
 
 def generate_data():
@@ -46,7 +48,7 @@ def generate_data():
             try:
                 formatted_prompt = PROMPT_TEMPLATE.replace("{{place}}", area["place"]).replace("{{location}}", area["location"])
                 response = client.beta.chat.completions.parse(
-                    model="gemini-1.5-flash-8b",
+                    model=MODEL,
                     messages=[{"role": "user", "content": formatted_prompt}],
                     response_format=ClimbingRoutes,
                 )
